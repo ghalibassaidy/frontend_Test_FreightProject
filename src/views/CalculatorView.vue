@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 const countries = ref([])
 const categories = ref([])
 const destinations = ref([])
@@ -18,7 +20,7 @@ const authToken = localStorage.getItem('accessToken')
 
 async function fetchCountries() {
   try {
-    const response = await fetch('http://localhost:8000/api/countries/', {
+    const response = await fetch(`${API_BASE_URL}/api/countries/`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -40,7 +42,7 @@ async function fetchCategories(countryId) {
   isLoadingCategories.value = true
   categories.value = []
   try {
-    const response = await fetch(`http://localhost:8000/api/categories/?country_id=${countryId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/categories/?country_id=${countryId}`, {
       headers: { Authorization: `Bearer ${authToken}` },
     })
     if (!response.ok) throw new Error('Failed to fetch categories.')
@@ -61,7 +63,7 @@ async function searchDestinations() {
   isLoadingDestinations.value = true
   try {
     const response = await fetch(
-      `http://localhost:8000/api/destinations/?search=${destinationSearchTerm.value}`,
+      `${API_BASE_URL}/api/destinations/?search=${destinationSearchTerm.value}`,
       {
         headers: { Authorization: `Bearer ${authToken}` },
       },
@@ -100,7 +102,7 @@ async function handleCalculation() {
     weight: weight.value,
   }
   try {
-    const response = await fetch('http://localhost:8000/api/calculate-freight/', {
+    const response = await fetch(`${API_BASE_URL}/api/calculate-freight/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -276,122 +278,25 @@ h1 {
   font-weight: 600;
 }
 
-.destination-group {
-  position: relative;
-}
-.destination-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 10;
-}
-.destination-results li {
-  padding: 0.75rem;
-  cursor: pointer;
-}
-.destination-results li:hover {
-  background-color: #f0f2f5;
-}
-.form-group {
-  margin-bottom: 1.5rem;
-}
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #495057;
-}
-select,
-input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-}
-select:focus,
-input:focus {
-  outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-.weight-input {
-  display: flex;
-  align-items: center;
-}
-.weight-input span {
-  margin-left: 1rem;
-  font-weight: 500;
-  color: #6c757d;
-}
-.calculate-btn {
-  width: 100%;
-  padding: 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #007bff;
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    transform 0.2s;
-}
-.calculate-btn:hover {
-  background-color: #0069d9;
-  transform: translateY(-2px);
-}
-.calculate-btn:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-  transform: none;
-}
-.results-container {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e9ecef;
-}
-.result-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-.result-item span {
-  color: #6c757d;
-}
-.result-item strong {
-  color: #212529;
-  font-weight: 500;
-}
-.result-item.total {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-.result-item.total strong {
-  color: #007bff;
-}
-hr {
-  display: none;
-}
+.destination-group { position: relative; }
+.destination-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; border-top: none; border-radius: 0 0 4px 4px; list-style-type: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; z-index: 10; }
+.destination-results li { padding: 0.75rem; cursor: pointer; }
+.destination-results li:hover { background-color: #f0f2f5; }
+.form-group { margin-bottom: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #495057; }
+select, input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ced4da; border-radius: 8px; font-size: 1rem; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; }
+select:focus, input:focus { outline: none; border-color: #80bdff; box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+.weight-input { display: flex; align-items: center; }
+.weight-input span { margin-left: 1rem; font-weight: 500; color: #6c757d; }
+.calculate-btn { width: 100%; padding: 1rem; border: none; border-radius: 8px; background-color: #007bff; color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+.calculate-btn:hover { background-color: #0069d9; transform: translateY(-2px); }
+.calculate-btn:disabled { background-color: #6c757d; cursor: not-allowed; transform: none; }
+.results-container { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e9ecef; }
+.result-item { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1rem; }
+.result-item span { color: #6c757d; }
+.result-item strong { color: #212529; font-weight: 500; }
+.result-item.total { font-size: 1.25rem; font-weight: 600; }
+.result-item.total strong { color: #007bff; }
+hr { display: none; }
 </style>

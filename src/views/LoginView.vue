@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+
 const username = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -11,7 +13,7 @@ const router = useRouter()
 async function handleLogin() {
   errorMessage.value = ''
   try {
-    const response = await fetch('http://localhost:8000/api/token/', {
+    const response = await fetch(`${API_BASE_URL}/api/token/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
