@@ -66,6 +66,10 @@ async function handleLogin() {
         </div>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <button type="submit" class="auth-btn">Login</button>
+        <p class="switch-form">
+          Don't have an account?
+          <router-link to="/register">Register here</router-link>
+        </p>
       </form>
     </div>
   </div>
