@@ -13,16 +13,7 @@ const router = useRouter()
 async function handleLogin() {
   errorMessage.value = ''
   try {
-    const response = await fetch(`${API_BASE_URL}/api/token/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value,
-      }),
-    })
+    const response = await fetch(`${API_BASE_URL}/api/token/`, {})
 
     const data = await response.json()
 
@@ -32,7 +23,10 @@ async function handleLogin() {
 
     localStorage.setItem('accessToken', data.access)
     localStorage.setItem('refreshToken', data.refresh)
-    router.push('/')
+
+    await router.push('/')
+
+    window.location.reload()
   } catch (error) {
     errorMessage.value = error.message
   }
