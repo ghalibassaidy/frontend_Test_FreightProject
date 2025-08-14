@@ -55,11 +55,12 @@ async function searchDestinations() {
   isLoadingDestinations.value = true
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/destination-cities/?search=${encodeURIComponent(destinationSearchTerm.value)}`,
+      `${API_BASE_URL}/api/destinations/?search=${encodeURIComponent(destinationSearchTerm.value)}`,
       {
         headers: { Authorization: `Bearer ${authToken}` },
       },
     )
+
     if (!response.ok) throw new Error('Failed to fetch destinations from API.')
 
     destinations.value = await response.json()
