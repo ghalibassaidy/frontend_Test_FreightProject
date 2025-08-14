@@ -27,7 +27,6 @@ async function fetchCountries() {
     countries.value = await response.json()
   } catch (error) {
     console.error(error)
-    alert(error.message)
   }
 }
 
@@ -43,7 +42,6 @@ async function fetchCategories(countryId) {
     categories.value = await response.json()
   } catch (error) {
     console.error(error)
-    alert(error.message)
   } finally {
     isLoadingCategories.value = false
   }
@@ -73,7 +71,7 @@ async function searchDestinations() {
 
 function selectDestination(destination) {
   selectedDestination.value = destination.city_id
-  destinationSearchTerm.value = `${destination.subdistrict}, ${destination.city_name}`
+  destinationSearchTerm.value = `${destination.sub_district}, ${destination.city_name}, ${destination.province}`
   destinations.value = []
 }
 
@@ -178,16 +176,15 @@ watch(destinationSearchTerm, (newVal) => {
             <ul v-if="destinations.length > 0" class="destination-results">
               <li
                 v-for="dest in destinations"
-                :key="dest.city_id + dest.subdistrict"
+                :key="dest.city_id + dest.sub_district"
                 @click="selectDestination(dest)"
               >
-                <strong>{{ dest.subdistrict }}, {{ dest.city_name }}</strong>
+                <strong>{{ dest.sub_district }}, {{ dest.city_name }}</strong>
                 <small>{{ dest.province }} - {{ dest.postal_code }}</small>
               </li>
             </ul>
           </div>
         </div>
-
         <div class="form-group">
           <label for="category">Product Category</label>
           <select
@@ -203,7 +200,6 @@ watch(destinationSearchTerm, (newVal) => {
             </option>
           </select>
         </div>
-
         <div class="form-group">
           <label for="weight">Total Weight</label>
           <div class="weight-input">
@@ -218,12 +214,10 @@ watch(destinationSearchTerm, (newVal) => {
             <span>Kg</span>
           </div>
         </div>
-
         <button type="submit" class="calculate-btn" :disabled="isCalculating">
           {{ isCalculating ? 'Calculating...' : 'Calculate' }}
         </button>
       </form>
-
       <div v-if="calculationResult" class="results-container">
         <h2>Calculation Result</h2>
         <div class="result-item">
@@ -373,7 +367,7 @@ input:focus {
 }
 .calculate-btn:hover {
   background-color: #0069d9;
-  transform: translateY(-2px);
+  transform: translateY(-px);
 }
 .calculate-btn:disabled {
   background-color: #6c757d;
