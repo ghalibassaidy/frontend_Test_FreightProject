@@ -13,7 +13,16 @@ const router = useRouter()
 async function handleLogin() {
   errorMessage.value = ''
   try {
-    const response = await fetch(`${API_BASE_URL}/api/token/`, {})
+    const response = await fetch(`${API_BASE_URL}/api/token/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    })
 
     const data = await response.json()
 
@@ -34,8 +43,8 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="auth-container">
-    <div class="auth-form">
+  <div class="view-container">
+    <div class="auth-container">
       <h1>Login</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
@@ -70,20 +79,21 @@ async function handleLogin() {
 </template>
 
 <style scoped>
-.auth-container {
+.view-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: #f0f2f5;
+  padding: 2rem;
+  min-height: calc(100vh - 100px);
 }
-.auth-form {
+.auth-container {
   background: white;
-  padding: 2rem 3rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  border: 1px solid #e9ecef;
 }
 h1 {
   text-align: center;
@@ -95,14 +105,15 @@ h1 {
 label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 .auth-btn {
   width: 100%;
@@ -112,6 +123,15 @@ input {
   color: white;
   font-size: 1.1rem;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+}
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.switch-form {
+  text-align: center;
+  margin-top: 1.5rem;
 }
 </style>
