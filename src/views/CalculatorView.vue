@@ -54,19 +54,18 @@ async function searchDestinations() {
   }
   isLoadingDestinations.value = true
   try {
-    const response = await fetch(`/cities.json`)
-    if (!response.ok) throw new Error('Failed to fetch destinations file.')
-
-    const allCities = await response.json()
-    const searchTerm = destinationSearchTerm.value.toLowerCase()
-
-    destinations.value = allCities.filter(
-      (city) =>
-        city.city_name.toLowerCase().includes(searchTerm) ||
-        city.province.toLowerCase().includes(searchTerm),
+    const response = await fetch(
+      `${API_BASE_URL}/api/destination-cities/?search=${encodeURIComponent(destinationSearchTerm.value)}`,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      },
     )
+    if (!response.ok) throw new Error('Failed to fetch destinations from API.')
+
+    destinations.value = await response.json()
   } catch (error) {
     console.error(error)
+    destinations.value = []
   } finally {
     isLoadingDestinations.value = false
   }
