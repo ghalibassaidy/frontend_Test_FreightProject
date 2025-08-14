@@ -54,14 +54,17 @@ async function searchDestinations() {
   }
   isLoadingDestinations.value = true
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/destinations/?search=${destinationSearchTerm.value}`,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-      },
+    const response = await fetch(`/cities.json`)
+    if (!response.ok) throw new Error('Failed to fetch destinations file.')
+
+    const allCities = await response.json()
+    const searchTerm = destinationSearchTerm.value.toLowerCase()
+
+    destinations.value = allCities.filter(
+      (city) =>
+        city.city_name.toLowerCase().includes(searchTerm) ||
+        city.province.toLowerCase().includes(searchTerm),
     )
-    if (!response.ok) throw new Error('Failed to fetch destinations.')
-    destinations.value = await response.json()
   } catch (error) {
     console.error(error)
   } finally {
@@ -71,7 +74,7 @@ async function searchDestinations() {
 
 function selectDestination(destination) {
   selectedDestination.value = destination.city_id
-  destinationSearchTerm.value = `${destination.sub_district}, ${destination.city_name}, ${destination.province}`
+  destinationSearchTerm.value = `${destination.city_name}, ${destination.province}`
   destinations.value = []
 }
 
@@ -174,13 +177,9 @@ watch(destinationSearchTerm, (newVal) => {
             />
             <div v-if="isLoadingDestinations" class="loading-text">Loading...</div>
             <ul v-if="destinations.length > 0" class="destination-results">
-              <li
-                v-for="dest in destinations"
-                :key="dest.city_id + dest.sub_district"
-                @click="selectDestination(dest)"
-              >
-                <strong>{{ dest.sub_district }}, {{ dest.city_name }}</strong>
-                <small>{{ dest.province }} - {{ dest.postal_code }}</small>
+              <li v-for="dest in destinations" :key="dest.city_id" @click="selectDestination(dest)">
+                <strong>{{ dest.city_name }}</strong>
+                <small>{{ dest.province }}</small>
               </li>
             </ul>
           </div>
@@ -367,7 +366,7 @@ input:focus {
 }
 .calculate-btn:hover {
   background-color: #0069d9;
-  transform: translateY(-px);
+  transform: translateY(-2px);
 }
 .calculate-btn:disabled {
   background-color: #6c757d;
