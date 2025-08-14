@@ -23,17 +23,17 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 })
 
 router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem('accessToken')
+  const isLoggedIn = !!localStorage.getItem('accessToken')
 
-  if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
-    next('/login')
-  } else if (to.name === 'Login' && loggedIn) {
-    next('/')
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ name: 'Login' })
+  } else if ((to.name === 'Login' || to.name === 'Register') && isLoggedIn) {
+    next({ name: 'Calculator' })
   } else {
     next()
   }
