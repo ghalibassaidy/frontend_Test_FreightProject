@@ -15,6 +15,7 @@ const calculationResult = ref(null)
 const isLoadingCategories = ref(false)
 const isLoadingDestinations = ref(false)
 const isCalculating = ref(false)
+const userJustSelected = ref(false)
 
 const authToken = localStorage.getItem('accessToken')
 
@@ -56,13 +57,9 @@ async function searchDestinations() {
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/destinations/?search=${encodeURIComponent(destinationSearchTerm.value)}`,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-      },
+      { headers: { Authorization: `Bearer ${authToken}` } },
     )
-
     if (!response.ok) throw new Error('Failed to fetch destinations from API.')
-
     destinations.value = await response.json()
   } catch (error) {
     console.error(error)
@@ -73,10 +70,12 @@ async function searchDestinations() {
 }
 
 function selectDestination(destination) {
+  userJustSelected.value = true
   selectedDestination.value = destination.city_id
   destinationSearchTerm.value = `${destination.city_name}, ${destination.province}`
   destinations.value = []
 }
+// -----------------------------
 
 async function handleCalculation() {
   if (
@@ -137,16 +136,17 @@ watch(selectedOrigin, (newVal) => {
 })
 
 let debounceTimer
-watch(destinationSearchTerm, (newVal) => {
-  if (
-    selectedDestination.value &&
-    newVal !== destinations.value.find((d) => d.city_id === selectedDestination.value)?.city_name
-  ) {
+watch(destinationSearchTerm, () => {
+  if (!userJustSelected.value) {
     selectedDestination.value = ''
   }
+
   clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => {
-    searchDestinations()
+    if (!userJustSelected.value) {
+      searchDestinations()
+    }
+    userJustSelected.value = false
   }, 300)
 })
 </script>
@@ -217,6 +217,7 @@ watch(destinationSearchTerm, (newVal) => {
           {{ isCalculating ? 'Calculating...' : 'Calculate' }}
         </button>
       </form>
+
       <div v-if="calculationResult" class="results-container">
         <h2>Calculation Result</h2>
         <div class="result-item">
